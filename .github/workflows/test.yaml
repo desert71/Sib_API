@@ -1,0 +1,15 @@
+name: simple_CI
+
+on:
+  push:
+    branches: master
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository code
+      uses: actions/checkout@v3
+
+    - name: build and run containers
+      run: docker-compose -f docker-compose-ci.yaml up -d
