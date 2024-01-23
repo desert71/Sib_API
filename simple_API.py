@@ -3,6 +3,8 @@ from motor.motor_asyncio import AsyncIOMotorClient
 from fastapi import FastAPI, Request
 from envparse import Env
 from fastapi.routing import APIRouter, APIRoute
+from models import Todo
+from random import randint
 
 env = Env()
 MONGODB_URL = env.str("MONGODB_URL", default="mongodb://localhost:27017/test_database")
@@ -47,14 +49,16 @@ async def mainpage() -> str:
 
             }
 
-async def create_record(request: Request) -> dict:
+async def create_record(request: Request, d: dict) -> dict:
     mongo_client: AsyncIOMotorClient = request.app.state.mongo_client["test_database"]
-    await mongo_client.records.insert_one({"sample": "record!!!!"})
-    return {"Success": True}
+    newRec = Todo(d["title"], d["description"], False)
+    newId = randint(1, 10000)
+    await mongo_client.records.insert_one({newId: newRec})
+    return {"Success": True, "newRecord": newRec}
 
-async def get_record(rrequest: Request) -> list:
+async def get_record(rrequest: Request, id: int) -> list:
     mongo_client: AsyncIOMotorClient = rrequest.app.state.mongo_client["test_database"]
-    cursor = mongo_client.records.find({})
+    cursor = mongo_client.records.find(id)
     res = []
     for document in await cursor.to_list(length=100):
         document["_id"] = str(document["_id"])
@@ -65,7 +69,7 @@ routes = [
     APIRoute(path="/ping", endpoint=ping, methods=["GET"]),
     APIRoute(path="/", endpoint=mainpage, methods=["GET"]),
     APIRoute(path="/create_record", endpoint=create_record, methods=["POST"]),
-    APIRoute(path="/get_record", endpoint=get_record, methods=["GET"]),
+    APIRoute(path="/get_record/{id}", endpoint=get_record, methods=["GET"]),
 ]
 client = AsyncIOMotorClient(MONGODB_URL)
 app = FastAPI()
