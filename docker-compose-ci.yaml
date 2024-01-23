@@ -26,6 +26,15 @@ services:
     networks:
       - custom
 
+  # database service
+  mongo_db:
+    image: mongo
+    container_name: "mongo_db"
+    ports:
+      - "27017:27017"
+    networks:
+      - custom
+
 networks:
   custom:
     driver: bridge
