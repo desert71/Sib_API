@@ -12,7 +12,7 @@ app = FastAPI()
 async def ping() -> dict:
     return {"Success": True}
 
-async def mainpage() -> str:
+async def mainpage() -> dict:
     return {
                 "page": "Основная путь API-визитки",
                 "owner": "Казеннов Александр Максимович",
