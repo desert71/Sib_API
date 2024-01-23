@@ -51,7 +51,7 @@ async def mainpage() -> dict:
 
 async def create_record(request: Request, d: dict) -> dict:
     mongo_client: AsyncIOMotorClient = request.app.state.mongo_client["test_database"]
-    newRec = Todo(d["title"], d["description"], False)
+    newRec = Todo(title=d["title"], description=d["description"], completed=False)
     newId = randint(1, 10000)
     await mongo_client.records.insert_one({newId: newRec})
     return {"Success": True, "newRecord": newRec}
