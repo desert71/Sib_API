@@ -1,32 +1,32 @@
 version: "3"
 services:  
   
-  # nginx service
-  web:
-    container_name: "web"
-    image: nginx:alpine
-    depends_on:
-      - app
-    ports:
-      - "8082:80"
-    volumes:
-      - ./app/conf.d:/etc/nginx/conf.d
-    networks:
-      - custom
+  # # nginx service
+  # web:
+  #   container_name: "web"
+  #   image: nginx:alpine
+  #   depends_on:
+  #     - app
+  #   ports:
+  #     - "8082:80"
+  #   volumes:
+  #     - ./app/conf.d:/etc/nginx/conf.d
+  #   networks:
+  #     - custom
     
-  # app
-  app:
-    container_name: "app"
-    image: app
-    environment:
-      - MONGODB_URL=mongodb://mongo_db/test_database
-    build:
-      context: .
-      dockerfile: Dockerfile
-    ports:
-      - "8000:8000"
-    networks:
-      - custom
+  # # app
+  # app:
+  #   container_name: "app"
+  #   image: app
+  #   environment:
+  #     - MONGODB_URL=mongodb://mongo_db/test_database
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile
+  #   ports:
+  #     - "8000:8000"
+  #   networks:
+  #     - custom
 
   # database service
   mongo_db:

@@ -53,12 +53,12 @@ async def create_record(request: Request, d: dict) -> dict:
     mongo_client: AsyncIOMotorClient = request.app.state.mongo_client["test_database"]
     newRec = Todo(title=d["title"], description=d["description"], completed=False)
     newId = randint(1, 10000)
-    await mongo_client.records.insert_one({newId: newRec})
-    return {"Success": True, "newRecord": newRec}
+    await mongo_client.records.insert_one(d)
+    return {"Success": True, "newRecord": d}
 
-async def get_record(rrequest: Request, id: int) -> list:
+async def get_record(rrequest: Request, title_need: str):
     mongo_client: AsyncIOMotorClient = rrequest.app.state.mongo_client["test_database"]
-    cursor = mongo_client.records.find(id)
+    cursor = mongo_client.records.find({"title":title_need})
     res = []
     for document in await cursor.to_list(length=100):
         document["_id"] = str(document["_id"])
@@ -69,7 +69,7 @@ routes = [
     APIRoute(path="/ping", endpoint=ping, methods=["GET"]),
     APIRoute(path="/", endpoint=mainpage, methods=["GET"]),
     APIRoute(path="/create_record", endpoint=create_record, methods=["POST"]),
-    APIRoute(path="/get_record/{id}", endpoint=get_record, methods=["GET"]),
+    APIRoute(path="/get_record", endpoint=get_record, methods=["GET"]),
 ]
 client = AsyncIOMotorClient(MONGODB_URL)
 app = FastAPI()
